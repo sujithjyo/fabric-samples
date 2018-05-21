@@ -1,19 +1,30 @@
-'use strict';
-/*
-* Copyright IBM Corp All Rights Reserved
-*
-* SPDX-License-Identifier: Apache-2.0
-*/
-/*
- * Chaincode Invoke
+/**
+ * Copyright 2017 IBM All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the 'License');
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an 'AS IS' BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
-
-var Fabric_Client = require('fabric-client');
-var path = require('path');
 var util = require('util');
+var fs = require('fs');
+var path = require('path');
+var config = require('../config.json');
+var helper = require('./helper.js');
+var logger = helper.getLogger('Create-Channel');
+var Fabric_Client = require('fabric-client');
 var os = require('os');
 
-//
+//Attempt to send a request to the orderer with the sendCreateChain method
+var createCar = function(userid, fileid, hash, name) {
+
 var fabric_client = new Fabric_Client();
 
 // setup the fabric network
@@ -25,12 +36,12 @@ channel.addOrderer(order);
 
 //
 var member_user = null;
-var store_path = path.join(__dirname, 'hfc-key-store');
+var store_path = path.join(__dirname, '../hfc-key-store');
 console.log('Store path:'+store_path);
 var tx_id = null;
 
 // create the key value store as defined in the fabric-client/config/default.json 'key-value-store' setting
-Fabric_Client.newDefaultKeyValueStore({ path: store_path
+return Fabric_Client.newDefaultKeyValueStore({ path: store_path
 }).then((state_store) => {
 	// assign the store to the fabric client
 	fabric_client.setStateStore(state_store);
@@ -61,8 +72,8 @@ Fabric_Client.newDefaultKeyValueStore({ path: store_path
 	var request = {
 		//targets: let default to the peer assigned to the client
 		chaincodeId: 'fabcar',
-		fcn: '',
-		args: [''],
+		fcn: 'createFile',
+		args: ['CAR10', 'Honda', 'Accord', 'Black'],
 		chainId: 'mychannel',
 		txId: tx_id
 	};
@@ -159,3 +170,8 @@ Fabric_Client.newDefaultKeyValueStore({ path: store_path
 }).catch((err) => {
 	console.error('Failed to invoke successfully :: ' + err);
 });
+	
+
+};
+
+exports.createCar = createCar;

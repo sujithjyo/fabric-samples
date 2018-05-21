@@ -42,7 +42,6 @@ var invokeChaincode = async function(peerNames, channelName, chaincodeName, fcn,
 
 		// send proposal to endorser
 		var request = {
-			targets: peerNames,
 			chaincodeId: chaincodeName,
 			fcn: fcn,
 			args: args,
@@ -100,7 +99,7 @@ var invokeChaincode = async function(peerNames, channelName, chaincodeName, fcn,
 						eh.unregisterTxEvent(tx_id_string);
 
 						if (code !== 'VALID') {
-							let message = util.format('The invoke chaincode transaction was invalid, code:%s',code);
+							let message = until.format('The invoke chaincode transaction was invalid, code:%s',code);
 							logger.error(message);
 							reject(new Error(message));
 						} else {
@@ -168,10 +167,9 @@ var invokeChaincode = async function(peerNames, channelName, chaincodeName, fcn,
 
 	if (!error_message) {
 		let message = util.format(
-			'Successfully invoked the chaincode %s to the channel \'%s\' for transaction ID: %s',
-			org_name, channelName, tx_id_string);
+			'Successfully invoked the chaincode %s to the channel \'%s\'',
+			org_name, channelName);
 		logger.info(message);
-
 		return tx_id_string;
 	} else {
 		let message = util.format('Failed to invoke chaincode. cause:%s',error_message);
